@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+        font-family: 'Inter', sans-serif;
+      }
+
+      .heatmap-cell {
+        width: 24px;
+        height: 24px;
+        margin: 2px;
+        transition: all 0.3s ease;
+      }
+
+      .heatmap-cell:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .done {
+        background-color: #22c55e; /* green-500 */
+      }
+
+      .missed {
+        background-color: #ef4444; /* red-500 */
+      }
+
+      .pending {
+        background-color: #cbd5e1; /* slate-300 */
+      }
