@@ -4,32 +4,26 @@ services:
   backend:
     build:
       context: ./backend
-    container_name: fastapi_app
+    container_name: fastapi_app_prod
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
     depends_on:
       - db
 
   frontend:
     build:
       context: ./frontend
-      target: development  # Use development stage
-    container_name: react_app_dev
+      target: production  # Use production stage
+    container_name: react_app_prod
     ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    command: npm start
+      - "80:80"
+    depends_on:
+      - backend
 
   db:
     image: postgres:14
-    container_name: postgres_db
+    container_name: postgres_db_prod
     restart: always
     environment:
       POSTGRES_USER: myuser
