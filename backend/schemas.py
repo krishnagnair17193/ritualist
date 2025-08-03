@@ -20,24 +20,64 @@ class Tag(TagBase):
     class Config:
         orm_mode = True
 
+
 class HabitBase(BaseModel):
     title: str
     description: Optional[str] = None
-    periodicity: PeriodicityEnum
-    frequency: Optional[int] = None
-    select_days: Optional[str] = None
-    start_date: date
-    end_date: Optional[date] = None
-    reminder: bool = False
-    icon: Optional[str] = None
-    tag_ids: List[int] = []
+    category: Optional[str] = None
+
 
 class HabitCreate(HabitBase):
-    pass
+    tag_ids: List[int] = []
+
 
 class Habit(HabitBase):
     id: int
-    tags: List[Tag]
+    tags: List['Tag'] = []
+
+    # These fields will be populated by the API for the dashboard
+    completed: Optional[bool] = False
+    streak: Optional[int] = 0
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+
+# If you want to implement proper habit logging, add these models:
+class HabitLogBase(BaseModel):
+    habit_id: int
+    date: date
+    completed: bool = False
+    notes: Optional[str] = None
+
+
+class HabitLogCreate(HabitLogBase):
+    pass
+
+
+class HabitLog(HabitLogBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
+# For the toggle response
+class ToggleResponse(BaseModel):
+    message: str
+    habit_id: int
+    date: str
+    success: bool
+
+
+# For habit statistics
+class HabitStats(BaseModel):
+    habit_id: int
+    total_days: int
+    completed_days: int
+    completion_rate: float
+    current_streak: int
+    longest_streak: int
+
+class ToggleHabitRequest(BaseModel):
+    date: Optional[str] = None

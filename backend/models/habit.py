@@ -25,6 +25,7 @@ class Habit(Base):
     __tablename__ = 'habits'
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     title = Column(String, nullable=False)
     description = Column(String)
     periodicity = Column(Enum(PeriodicityEnum), nullable=False)
@@ -37,6 +38,14 @@ class Habit(Base):
 
     tags = relationship("Tag", secondary=habit_tags, back_populates="habits")
     habit_logs = relationship("HabitLog", back_populates="habit", cascade="all, delete-orphan")
+
+    def has_completed_on_date(self, db: Session, log_date: date) -> bool:
+        """Check if the habit was completed on a specific date."""
+        log = db.query(HabitLog).filter(
+            HabitLog.habit_id == self.id,
+            HabitLog.log_date == log_date
+        ).first()
+        return log.completed if log else False
 
     def get_current_streak(self, db: Session) -> int:
         """Calculate the current streak for this habit."""
